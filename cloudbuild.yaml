@@ -17,3 +17,6 @@ steps:
       ]
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/demo-repo/hola-api:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
