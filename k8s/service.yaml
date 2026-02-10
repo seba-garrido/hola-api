@@ -1,0 +1,13 @@
+cat > k8s/service.yaml <<'YAML'
+apiVersion: v1
+kind: Service
+metadata:
+  name: hola-api-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: hola-api
+  ports:
+    - port: 80
+      targetPort: 8080
+YAML

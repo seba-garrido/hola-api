@@ -1,22 +1,26 @@
 steps:
+  # Build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/demo-repo/hola-api:$SHORT_SHA', '.']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/demo-repo/hola-api:$SHORT_SHA']
-
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
     args:
-      [
-        'run','deploy','hola-api',
-        '--image','us-central1-docker.pkg.dev/$PROJECT_ID/demo-repo/hola-api:$SHORT_SHA',
-        '--region','us-central1',
-        '--platform','managed',
-        '--allow-unauthenticated'
-      ]
-images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/demo-repo/hola-api:$SHORT_SHA'
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/project-95fcfc61-ea90-4e73-8c4/demo-repo/hola-api:$SHORT_SHA'
+      - '.'
 
-options:
-  logging: CLOUD_LOGGING_ONLY
+  # Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/project-95fcfc61-ea90-4e73-8c4/demo-repo/hola-api:$SHORT_SHA'
+
+  # Deploy (aplica los YAML y actualiza la imagen)
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+      - 'run'
+      - '--filename=k8s/'
+      - '--image=us-central1-docker.pkg.dev/project-95fcfc61-ea90-4e73-8c4/demo-repo/hola-api:$SHORT_SHA'
+      - '--location=us-central1'
+      - '--cluster=hola-cluster'
+
+images:
+  - 'us-central1-docker.pkg.dev/project-95fcfc61-ea90-4e73-8c4/demo-repo/hola-api:$SHORT_SHA'
